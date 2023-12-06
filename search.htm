@@ -1,0 +1,60 @@
+<html>
+
+<body>
+    <h1>Addressing rows 15, 19 and 21</h1>
+    <h2>Existing markup -- no legend, and invalid nesting of an input inside a link</h2>
+    <div class=" collapse in facets-faceted-navigation-item-facet-group-wrapper" id="facetList_3241-category-wrapper">
+        <div class="facets-faceted-navigation-item-facet-group-content">
+            <ul class="facets-faceted-navigation-item-facet-optionlist">
+                <li><a class="facets-faceted-navigation-item-facet-option "
+                        href="#" title="Men">
+                        <input
+                            type="checkbox" class="facets-faceted-navigation-item-facet-multi"><span>Men</span></a></li>
+            </ul>
+        </div>
+    </div>
+    <h2>Suggested changes to label link and remove role conflicts</h2>
+    <ul>
+        <li>Add a negative tabindex to the input</li>
+        <li>Aria-hide the input</li>
+        <li>Manipulate aria-label on the link is probably the easiest way to provide the missing category AND STATE information: "Men, Category", "Men, remove filter, Category."</li>
+    </ul>
+    <div class=" collapse in facets-faceted-navigation-item-facet-group-wrapper" id="facetList_3241-category-wrapper">
+        <div class="facets-faceted-navigation-item-facet-group-content">
+            <ul class="facets-faceted-navigation-item-facet-optionlist">
+                <li><a aria-label="Men, Category" class="facets-faceted-navigation-item-facet-option " 
+                        href="#" title="Men">
+                        <input TABINDEX="-1" 
+                            type="checkbox" class="facets-faceted-navigation-item-facet-multi"><span>Men</span></a></li>
+            </ul>
+        </div>
+    </div>
+
+    <h2>Restore focus after refresh, which should also announce changes</h2>
+    <p>Since the page does not actually navigate, just refreshes content, you should be able to preserve a JS variable for which element triggered the change, and then return focus to it.</p>
+    <p>e.g.:</p>
+    <pre>
+        var lastClicked = false;
+        let facetsToTrack = document.querySelectorAll('a.facets-faceted-navigation-item-facet-option');
+        console.log(facetsToTrack);
+        let trackLastClick = function(evt) {
+            lastClicked = evt.target.closest('a');
+            console.log(lastClicked);
+        }
+        if (facetsToTrack.length > 0) {
+            facetsToTrack.forEach(el => {
+                el.addEventListener('click', trackLastClick, false)
+            });
+        }
+
+        //and then on your reload watcher, set a timeOut of 500ms and THEN call...
+        if (lastClicked) {
+            lastClicked.focus();
+        }
+        // This will transfer focus to the link, which should now have the opposite label (add vs remove filter), which will announce that the operation worked.
+    </pre>
+
+</body>
+
+
+</html>
