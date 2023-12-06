@@ -36,10 +36,8 @@
     <pre>
         var lastClicked = false;
         let facetsToTrack = document.querySelectorAll('a.facets-faceted-navigation-item-facet-option');
-        console.log(facetsToTrack);
         let trackLastClick = function(evt) {
             lastClicked = evt.target.closest('a');
-            console.log(lastClicked);
         }
         if (facetsToTrack.length > 0) {
             facetsToTrack.forEach(el => {
